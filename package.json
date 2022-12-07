@@ -1,0 +1,16 @@
+{
+  "name": "coc-bot-electric-boogaloo",
+  "version": "2.0.0",
+  "description": "CoC Bot: Electric Boogaloo",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo.git"
+  },
+  "author": "rozbrajaczpoziomow",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "bugs": {
+    "url": "https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo/issues"
+  },
+  "homepage": "https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo#readme"
+}

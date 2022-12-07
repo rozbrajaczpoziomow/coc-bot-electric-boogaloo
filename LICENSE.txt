@@ -1,0 +1,5 @@
+Roz's license
+
+1. You must include a copy of this license in every clone / fork / usage / ... of this project.
+2. You must link this license at the top of every code / functional file.
+3. You musn't monetize the product in any way, shape, or form.
