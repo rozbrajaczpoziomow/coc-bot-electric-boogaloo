@@ -1,9 +1,19 @@
 {
 	"CodinGame": {
 		"token": "cgSession cookie value",
-		"userId": "ASDASDASD"
+		"userId": "can be gotten by looking at requests",
+		"autoSubmit": "Whether to automatically submit as the bot, set to false if the bot account is your main account (type: boolean)"
 	},
 	"Twitch": {
-		"token": "TODO"
+		"username": "The twitch username of your bot",
+		"token": "Can be gotten thru https://twitchapps.com/tmi/",
+		"channel": "Your twitch username",
+		"admins": [
+            "< Bot admins, treated above mods",
+            "< All names here should be lowercase."
+            "[probably put your channel in this list]",
+            "tyrolkagd"
+        ],
+		"prefix": "The prefix for commands, can also be set by sending `@<username> prefix <something>` as the owner"
 	}
 }

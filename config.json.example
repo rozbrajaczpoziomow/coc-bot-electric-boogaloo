@@ -1,0 +1,16 @@
+{
+    "CodinGame": {
+        "token": "00000000-0000-0000-0000-000000000000",
+        "userId": 4175165,
+        "autoSubmit": false
+    },
+    "Twitch": {
+        "username": "tyrolkagd",
+        "token": "oauth:_______________________________",
+        "channel": "tyrolkagd",
+        "admins": [
+            "tyrolkagd"
+        ],
+        "prefix": ","
+    }
+}

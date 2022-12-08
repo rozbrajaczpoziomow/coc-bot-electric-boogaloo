@@ -12,5 +12,8 @@
   "bugs": {
     "url": "https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo/issues"
   },
-  "homepage": "https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo#readme"
+  "homepage": "https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo#readme",
+  "dependencies": {
+    "tmi.js": "^1.8.5"
+  }
 }
