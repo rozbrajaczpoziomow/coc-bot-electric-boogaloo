@@ -9,11 +9,11 @@
 		"token": "Can be gotten thru https://twitchapps.com/tmi/",
 		"channel": "Your twitch username",
 		"admins": [
-            "< Bot admins, treated above mods",
-            "< All names here should be lowercase."
-            "[probably put your channel in this list]",
-            "tyrolkagd"
-        ],
+			"< Bot admins, treated above mods",
+			"< All names here should be lowercase."
+			"[probably put your channel in this list]",
+			"tyrolkagd"
+		],
 		"prefix": "The prefix for commands, can also be set by sending `@<username> prefix <something>` as the owner"
 	}
 }
