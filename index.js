@@ -23,7 +23,7 @@ const CG = {
 			});
 		},
 		POST: async function POST(url, data) {
-			console.debug(`[CG POST] ${url}`);
+			console.debug(`[CG POST] ${url} - `, data);
 			return fetch(url, {
 				method: 'POST',
 				headers: {
@@ -38,6 +38,7 @@ const CG = {
 		modes;
 		languages;
 		publicHandle;
+		ideHandle;
 
 		static modeMapping = {
 			'f': 'FASTEST',
@@ -68,9 +69,16 @@ const CG = {
 		}
 
 		async create() {
-			this.publicHandle = (await (await CG.Request.POST("https://www.codingame.com/services/ClashOfCode/createPrivateClash", [CG.Config.userId, [...this.languages], [...this.modes]])).json()).publicHandle;
-			// For debugging ;p
-			// console.log(await (await CG.Request.POST("https://www.codingame.com/services/ClashOfCode/createPrivateClash", [CG.Config.userId, [...this.languages], [...this.modes]])).json());
+			const req = await CG.Request.POST("https://www.codingame.com/services/ClashOfCode/createPrivateClash", [CG.Config.userId, [...this.languages], [...this.modes]]);
+			const json = await req.json();
+
+			if(req.status != 200) {
+				console.error(`* [CG] Creating clash failed with code ${req.status}, server returned the following data:`)
+				console.error(json);
+				return send('Creating clash failed (see console)');
+			}
+
+			this.publicHandle = json.publicHandle;
 		}
 
 		async start() {
@@ -78,7 +86,10 @@ const CG = {
 		}
 
 		async submit() {
-			await CG.Request.POST('https://www.codingame.com/services/TestSession/submit', [this.publicHandle, { code: `Stream: https://twitch.tv/${Twitch.Config.channel}\nBot: https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo`, programmingLanguageId: CG.Clash.languages[Math.floor(Math.random() * CG.Clash.languages.length)] }, null]);
+			console.log(`[CG] Submitting for clash ${this.publicHandle}`)
+			this.ideHandle = (await (await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/startClashTestSession', [CG.Config.userId, this.publicHandle])).json()).handle;
+			
+			await CG.Request.POST('https://www.codingame.com/services/TestSession/submit', [this.ideHandle, { code: `Stream: https://twitch.tv/${Twitch.Config.channel}\nBot: https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo`, programmingLanguageId: CG.Clash.languages[Math.floor(Math.random() * CG.Clash.languages.length)] }, null]);
 			await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/shareCodinGamerSolutionByHandle', [CG.Config.userId, this.publicHandle]);
 		}
 
@@ -147,12 +158,12 @@ Twitch.EventListeners = {
 			if(!Twitch.Config.admins.includes(tags.username.toLowerCase()))
 				return send(Twitch.CurrentClash.url);
 
-			if(Twitch.CurrentClash == {})
+			if(!Twitch.CurrentClash.start)
 				return send(`There hasn't been a clash created.`);
 
 			await Twitch.CurrentClash.start();
 			if(CG.Config.autoSubmit)
-				setTimeout(() => Twitch.CurrentClash.submit(), 10000);
+				setTimeout(() => Twitch.CurrentClash.submit(), 30000);
 		}
 
 		if(cmd == 'eval') {
