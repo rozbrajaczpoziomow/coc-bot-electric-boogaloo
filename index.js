@@ -60,12 +60,6 @@ const CG = {
 		constructor(modes, langs) {
 			this.modes = new Set(modes.map(mode => CG.Clash.modeMapping[mode] || '').filter(mode => mode));
 			this.languages = new Set(langs.map(lang => CG.Clash.languagesLower.includes(lang.toLowerCase())? CG.Clash.languages[CG.Clash.languagesLower.indexOf(lang.toLowerCase())] : '').filter(lang => lang));
-
-			if(this.modes.length == 0)
-				this.modes = new Set(Object.values(CG.Clash.modeMapping));
-
-			if(this.languages.length == 0)
-				this.languages = new Set(CG.Clash.languages);
 		}
 
 		async create() {
@@ -88,7 +82,6 @@ const CG = {
 		async submit() {
 			console.log(`[CG] Submitting for clash ${this.publicHandle}`)
 			this.ideHandle = (await (await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/startClashTestSession', [CG.Config.userId, this.publicHandle])).json()).handle;
-			
 			await CG.Request.POST('https://www.codingame.com/services/TestSession/submit', [this.ideHandle, { code: `Stream: https://twitch.tv/${Twitch.Config.channel}\nBot: https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo`, programmingLanguageId: CG.Clash.languages[Math.floor(Math.random() * CG.Clash.languages.length)] }, null]);
 			await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/shareCodinGamerSolutionByHandle', [CG.Config.userId, this.publicHandle]);
 		}
@@ -134,7 +127,7 @@ Twitch.EventListeners = {
 				return send(`Current prefix: ${Twitch.Config.prefix}`);
 			Twitch.Config.prefix = message.split(' ').last();
 			SaveConfig();
-			console.log(`[TWITCH] New prefix set, saving new config.json`);
+			console.log(`[TWITCH] Prefix set, saving new config.json`);
 			return send(`Successfully set prefix to ${Twitch.Config.prefix}`);
 		}
 
@@ -168,7 +161,7 @@ Twitch.EventListeners = {
 
 		if(cmd == 'eval') {
 			if(!Twitch.Config.admins.includes(tags.username.toLowerCase()))
-				return send('I do not give you consent to use that command...mate...that\'s too dangerous...');
+				return send('I do not give you consent to use that command...mate...that\'d too dangerous...');
 			let out = eval(args.join(' '));
 			if(out == null) out = 'No output...'
 			if(typeof out == 'object') out = JSON.stringify(out);
