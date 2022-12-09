@@ -69,10 +69,11 @@ const CG = {
 			if(req.status != 200) {
 				console.error(`* [CG] Creating clash failed with code ${req.status}, server returned the following data:`)
 				console.error(json);
-				return send('Creating clash failed (see console)');
+				return false;
 			}
 
 			this.publicHandle = json.publicHandle;
+			return true;
 		}
 
 		async start() {
@@ -143,7 +144,8 @@ Twitch.EventListeners = {
 			if(!Twitch.Config.admins.includes(tags.username.toLowerCase()))
 				return send(Twitch.CurrentClash.url);
 			Twitch.CurrentClash = new CG.Clash(args, args);
-			await Twitch.CurrentClash.create();
+			if(!await Twitch.CurrentClash.create())
+				return send('Creating clash failed (see console)...')
 			return send(Twitch.CurrentClash.url);
 		}
 
