@@ -11,6 +11,8 @@
 		"admins": [
 			"tyrolkagd"
 		],
-		"prefix": ","
+		"prefix": ",",
+        "evalEnabled": true,
+        "evalGlobal": false
 	}
 }

@@ -14,6 +14,8 @@
 			"[probably put your channel in this list]",
 			"tyrolkagd"
 		],
-		"prefix": "The prefix for commands, can also be set by sending `@<username> prefix <something>` as the owner"
+		"prefix": "The prefix for commands, can also be set by sending `@<username> prefix <something>` as the owner",
+        "evalEnabled": "Whether the eval command is enabled (type: boolean)",
+        "evalGlobal": "Whether everyone has the permission to use eval...not a good idea... (type: boolean)"
 	}
 }

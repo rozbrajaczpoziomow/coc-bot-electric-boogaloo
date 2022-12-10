@@ -3,6 +3,10 @@
 const AllConfig = require('./config.json');
 const tmi = require('tmi.js');
 
+if(AllConfig.Twitch.evalGlobal)
+	for(var i = 0; i < 5; i++)
+		console.log('[!!!] Having evalGlobal enabled is a terrible idea... For token safety reasons or something idk...');
+
 async function SaveConfig() {
 	const { writeFile } = require('fs');
 	writeFile('./config.json', JSON.stringify(AllConfig, null, 4), () => {});
@@ -142,7 +146,7 @@ Twitch.EventListeners = {
 
 		if(cmd == 'new') {
 			if(!Twitch.Config.admins.includes(tags.username.toLowerCase()))
-				return send(Twitch.CurrentClash.url);
+				return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
 			Twitch.CurrentClash = new CG.Clash(args, args);
 			if(!await Twitch.CurrentClash.create())
 				return send('Creating clash failed (see console)...')
@@ -162,7 +166,9 @@ Twitch.EventListeners = {
 		}
 
 		if(cmd == 'eval') {
-			if(!Twitch.Config.admins.includes(tags.username.toLowerCase()))
+			if(!Twitch.Config.evalEnabled)
+				return send('Eval is disabled');
+			if(!Twitch.Config.evalGlobal && !Twitch.Config.admins.includes(tags.username.toLowerCase()))
 				return send('I do not give you consent to use that command...mate...that\'d too dangerous...');
 			let out = eval(args.join(' '));
 			if(out == null) out = 'No output...'
