@@ -12,7 +12,7 @@
 			"tyrolkagd"
 		],
 		"prefix": ",",
-        "evalEnabled": true,
-        "evalGlobal": false
+		"evalEnabled": true,
+		"evalGlobal": false
 	}
 }
