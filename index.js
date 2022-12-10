@@ -1,7 +1,8 @@
-// This project is licensed with the Roz's license, which should've been included within the root directory of this project, or - https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo/blob/main/LICENSE.txt
+// This project is licensed with Roz's license, which should've been included within the root directory of this project, or - https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo/blob/main/LICENSE.txt
 // This line is a tribute to me leaking my CG token on the second commit on the repo on GH
 const AllConfig = require('./config.json');
 const tmi = require('tmi.js');
+require('child_process').spawn('git', ['pull', '-f'], { shell: true, windowsHide: true, detached: true }).unref();
 
 if(AllConfig.Twitch.evalGlobal)
 	for(var i = 0; i < 5; i++)
