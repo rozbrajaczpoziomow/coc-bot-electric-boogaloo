@@ -177,6 +177,7 @@ Twitch.EventListeners = {
 		case 'link':
 			return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
 
+
 		/**
        	* create a new clash
        	*
@@ -187,6 +188,13 @@ Twitch.EventListeners = {
 
 			Twitch.CurrentClash = new CG.Clash(args, args);
 			if(!(await Twitch.CurrentClash.create()))
+
+		if(cmd == 'new') {
+			if(!Twitch.isAdmin(tags.username))
+				return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
+			Twitch.CurrentClash = new CG.Clash(args, args);
+			if(!await Twitch.CurrentClash.create())
+
 				return send('Creating clash failed (see console)...');
 			return send(Twitch.CurrentClash.url);
 
@@ -197,6 +205,9 @@ Twitch.EventListeners = {
        	*/
 		case 'start':
 			if(!Twitch.isAdmin(tags.username)) return;
+		if(cmd == 'start') {
+			if(!Twitch.isAdmin(tags.username))
+				return send(Twitch.CurrentClash.url);
 
 			if(!Twitch.CurrentClash.start)
 				return send(`There hasn't been a clash created.`);

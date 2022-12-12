@@ -25,5 +25,11 @@ The code loads the configuration from config.json - An example config can be fou
 -->start
 ```
 
+## Contributing
+Use ESLint.
+If you're using Sublime Text, you should install the `ESLint` package, as well as the `SublimeBuildOnSave` package, both from Package Control.
+Also, since there's no rule in ESLint for this:
+- Please don't use spaces before parentheses in stuff like ifs, whiles, and whatnot.
+
 ## Questions / bugs?
-Contact ||rozbrajaczpoziomow||#5650 on Discord with any suggestions, questions, bugs, or just smalltalk.. :)
+Open an issue or PR.
