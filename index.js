@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 // This project is licensed with Roz's license, which should've been included within the root directory of this project, or - https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo/blob/main/LICENSE.txt
 // This line is a tribute to me leaking my CG token on the second commit on the repo on GH
 const AllConfig = require('./config.json');
@@ -126,10 +127,11 @@ Twitch.isAdmin = username => Twitch.Config.admins.includes(username.toLowerCase(
 Twitch.EventListeners = {
 	// eslint-disable-next-line no-unused-vars
 	message: async function onMessage(channel, tags, message, self) {
-		const send = msg => Twitch.Client.say(channel, msg);
+		const send = msg => Twitch.Client.say(channel, `@${tags.username} ` + msg);
 		// if(self) return;
 		// console.log(`Message: ${message}`);
 		// console.log(`Tags: `, tags);
+
 		if(message.startsWith(`@${Twitch.Config.username} prefix`)) {
 			if(!Twitch.isAdmin(tags.username))
 				return send(`Current prefix: ${Twitch.Config.prefix}`);
@@ -144,21 +146,60 @@ Twitch.EventListeners = {
 		const cmd = _cmd[0].toLowerCase();
 		const args = _cmd.slice(1);
 
-		if(cmd == 'link')
+		switch(cmd) {
+		/**
+       	* request help
+       	*
+       	* @returns {string} a list of available commands
+       	*/
+		case 'help':
+			let viewerCommands = [
+				'!help',
+				'!link',
+				'!uptime',
+				'!playlist',
+				'!followage'
+			];
+			let adminCommands = ['!new', '!start', '!override', '!eval'];
+
+			if(Twitch.isAdmin(tags.username))
+				return send(
+					`list of commands: ${[...viewerCommands, ...adminCommands].join(
+						', '
+					)}`
+				);
+
+			return send(`sup bru, looking for list of commands?
+		today is your lucky day: ${viewerCommands.join(', ')}`);
+
+		/**
+       	* request the current clash link
+       	*
+       	* @returns {string} link to clash
+       	*/
+		case 'link':
 			return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
 
-		if(cmd == 'new') {
-			if(!Twitch.isAdmin(tags.username))
-				return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
+		/**
+       	* create a new clash
+       	*
+       	* @returns {string} link to clash
+       	*/
+		case 'new':
+			if(!Twitch.isAdmin(tags.username)) return;
+
 			Twitch.CurrentClash = new CG.Clash(args, args);
-			if(!await Twitch.CurrentClash.create())
+			if(!(await Twitch.CurrentClash.create()))
 				return send('Creating clash failed (see console)...');
 			return send(Twitch.CurrentClash.url);
-		}
 
-		if(cmd == 'start') {
-			if(!Twitch.isAdmin(tags.username))
-				return send(Twitch.CurrentClash.url);
+		/**
+       	* start the current clash
+       	*
+       	* @returns {string} link to clash
+       	*/
+		case 'start':
+			if(!Twitch.isAdmin(tags.username)) return;
 
 			if(!Twitch.CurrentClash.start)
 				return send(`There hasn't been a clash created.`);
@@ -166,13 +207,33 @@ Twitch.EventListeners = {
 			await Twitch.CurrentClash.start();
 			if(CG.Config.autoSubmit)
 				setTimeout(() => Twitch.CurrentClash.submit(), 30000);
-		}
+			break;
 
-		if(cmd == 'eval') {
-			if(!Twitch.Config.evalEnabled)
-				return send('Eval is disabled');
-			if(!Twitch.Config.evalGlobal && !Twitch.Config.admins.includes(tags.username.toLowerCase()))
-				return send('I do not give you consent to use that command...mate...that\'d too dangerous...');
+		/**
+       	* override the current clash link
+       	*
+       	* @returns {string} overridden link
+       	*/
+		case 'override':
+			if(!Twitch.isAdmin(tags.username)) return;
+
+			if(args.length == 0)
+				return send('No link provided, usage: !override <link>');
+			if(args.length > 1)
+				return send('Too many arguments, usage: !override <link>');
+			Twitch.CurrentClash.url = args[0];
+
+			return send(Twitch.CurrentClash.url);
+
+		/**
+       	* eval code
+       	*
+       	* @returns {string} output of code
+       	*/
+		case 'eval':
+			if(!Twitch.Config.evalEnabled) return console.log('Eval is disabled');
+			if(!Twitch.Config.evalGlobal && !Twitch.isAdmin(tags.username)) return;
+
 			let out = eval(args.join(' '));
 			if(out == null) out = 'No output...';
 			if(typeof out == 'object') out = JSON.stringify(out);
