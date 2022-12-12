@@ -13,7 +13,7 @@ async function SaveConfig() {
 	writeFile('./config.json', JSON.stringify(AllConfig, null, 4), () => {});
 }
 
-Array.prototype.last = function last() { return this[this.length - 1]; }
+Array.prototype.last = function last() { return this[this.length - 1]; };
 
 const CG = {
 	Config: AllConfig.CodinGame,
@@ -68,11 +68,11 @@ const CG = {
 		}
 
 		async create() {
-			const req = await CG.Request.POST("https://www.codingame.com/services/ClashOfCode/createPrivateClash", [CG.Config.userId, [...this.languages], [...this.modes]]);
+			const req = await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/createPrivateClash', [CG.Config.userId, [...this.languages], [...this.modes]]);
 			const json = await req.json();
 
 			if(req.status != 200) {
-				console.error(`* [CG] Creating clash failed with code ${req.status}, server returned the following data:`)
+				console.error(`* [CG] Creating clash failed with code ${req.status}, server returned the following data:`);
 				console.error(json);
 				return false;
 			}
@@ -86,7 +86,7 @@ const CG = {
 		}
 
 		async submit() {
-			console.log(`[CG] Submitting for clash ${this.publicHandle}`)
+			console.log(`[CG] Submitting for clash ${this.publicHandle}`);
 			this.ideHandle = (await (await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/startClashTestSession', [CG.Config.userId, this.publicHandle])).json()).handle;
 			await CG.Request.POST('https://www.codingame.com/services/TestSession/submit', [this.ideHandle, { code: `Stream: https://twitch.tv/${Twitch.Config.channel}\nBot: https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo`, programmingLanguageId: CG.Clash.languages[Math.floor(Math.random() * CG.Clash.languages.length)] }, null]);
 			await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/shareCodinGamerSolutionByHandle', [CG.Config.userId, this.publicHandle]);
@@ -122,40 +122,42 @@ Twitch.Client = new tmi.Client({
 
 Twitch.Client.connect();
 Twitch.CurrentClash = {};
+Twitch.isAdmin = username => Twitch.Config.admins.includes(username.toLowerCase());
 Twitch.EventListeners = {
+	// eslint-disable-next-line no-unused-vars
 	message: async function onMessage(channel, tags, message, self) {
 		const send = msg => Twitch.Client.say(channel, msg);
 		// if(self) return;
 		// console.log(`Message: ${message}`);
 		// console.log(`Tags: `, tags);
 		if(message.startsWith(`@${Twitch.Config.username} prefix`)) {
-			if(!Twitch.Config.admins.includes(tags.username.toLowerCase()))
+			if(!Twitch.isAdmin(tags.username))
 				return send(`Current prefix: ${Twitch.Config.prefix}`);
 			Twitch.Config.prefix = message.split(' ').last();
-			SaveConfig();
 			console.log(`[TWITCH] Prefix set, saving new config.json`);
+			SaveConfig();
 			return send(`Successfully set prefix to ${Twitch.Config.prefix}`);
 		}
 
 		if(!message.startsWith(Twitch.Config.prefix)) return;
 		const _cmd = message.slice(Twitch.Config.prefix.length).split(' ');
-		const cmd = _cmd[0];
+		const cmd = _cmd[0].toLowerCase();
 		const args = _cmd.slice(1);
 
 		if(cmd == 'link')
 			return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
 
 		if(cmd == 'new') {
-			if(!Twitch.Config.admins.includes(tags.username.toLowerCase()))
+			if(!Twitch.isAdmin(tags.username))
 				return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
 			Twitch.CurrentClash = new CG.Clash(args, args);
 			if(!await Twitch.CurrentClash.create())
-				return send('Creating clash failed (see console)...')
+				return send('Creating clash failed (see console)...');
 			return send(Twitch.CurrentClash.url);
 		}
 
 		if(cmd == 'start') {
-			if(!Twitch.Config.admins.includes(tags.username.toLowerCase()))
+			if(!Twitch.isAdmin(tags.username))
 				return send(Twitch.CurrentClash.url);
 
 			if(!Twitch.CurrentClash.start)
@@ -172,7 +174,7 @@ Twitch.EventListeners = {
 			if(!Twitch.Config.evalGlobal && !Twitch.Config.admins.includes(tags.username.toLowerCase()))
 				return send('I do not give you consent to use that command...mate...that\'d too dangerous...');
 			let out = eval(args.join(' '));
-			if(out == null) out = 'No output...'
+			if(out == null) out = 'No output...';
 			if(typeof out == 'object') out = JSON.stringify(out);
 			return send(out);
 		}
