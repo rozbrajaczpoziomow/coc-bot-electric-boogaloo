@@ -155,10 +155,7 @@ Twitch.EventListeners = {
 		case 'help':
 			let viewerCommands = [
 				'!help',
-				'!link',
-				'!uptime',
-				'!playlist',
-				'!followage'
+				'!link'
 			];
 			let adminCommands = ['!new', '!start', '!override', '!eval'];
 
@@ -208,22 +205,6 @@ Twitch.EventListeners = {
 			if(CG.Config.autoSubmit)
 				setTimeout(() => Twitch.CurrentClash.submit(), 30000);
 			break;
-
-		/**
-       	* override the current clash link
-       	*
-       	* @returns {string} overridden link
-       	*/
-		case 'override':
-			if(!Twitch.isAdmin(tags.username)) return;
-
-			if(args.length == 0)
-				return send('No link provided, usage: !override <link>');
-			if(args.length > 1)
-				return send('Too many arguments, usage: !override <link>');
-			Twitch.CurrentClash.url = args[0];
-
-			return send(Twitch.CurrentClash.url);
 
 		/**
        	* eval code
