@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 // This project is licensed with Roz's license, which should've been included within the root directory of this project, or - https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo/blob/main/LICENSE.txt
 // This line is a tribute to me leaking my CG token on the second commit on the repo on GH
 const AllConfig = require('./config.json');
@@ -152,12 +151,9 @@ Twitch.EventListeners = {
        	*
        	* @returns {string} a list of available commands
        	*/
-		case 'help':
-			let viewerCommands = [
-				'!help',
-				'!link'
-			];
-			let adminCommands = ['!new', '!start', '!override', '!eval'];
+		case 'help': {
+			let viewerCommands = ['help','link'].map(i => Twitch.Config.prefix+i);
+			let adminCommands = ['new', 'start', 'eval'].map(i => Twitch.Config.prefix+i);
 
 			if(Twitch.isAdmin(tags.username))
 				return send(
@@ -168,6 +164,7 @@ Twitch.EventListeners = {
 
 			return send(`sup bru, looking for list of commands?
 		today is your lucky day: ${viewerCommands.join(', ')}`);
+		}
 
 		/**
        	* request the current clash link
@@ -184,12 +181,6 @@ Twitch.EventListeners = {
        	* @returns {string} link to clash
        	*/
 		case 'new':
-			if(!Twitch.isAdmin(tags.username)) return;
-
-			Twitch.CurrentClash = new CG.Clash(args, args);
-			if(!(await Twitch.CurrentClash.create()))
-
-		if(cmd == 'new') {
 			if(!Twitch.isAdmin(tags.username))
 				return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
 			Twitch.CurrentClash = new CG.Clash(args, args);
@@ -204,8 +195,6 @@ Twitch.EventListeners = {
        	* @returns {string} link to clash
        	*/
 		case 'start':
-			if(!Twitch.isAdmin(tags.username)) return;
-		if(cmd == 'start') {
 			if(!Twitch.isAdmin(tags.username))
 				return send(Twitch.CurrentClash.url);
 
@@ -222,14 +211,14 @@ Twitch.EventListeners = {
        	*
        	* @returns {string} output of code
        	*/
-		case 'eval':
+		case 'eval':{
 			if(!Twitch.Config.evalEnabled) return console.log('Eval is disabled');
 			if(!Twitch.Config.evalGlobal && !Twitch.isAdmin(tags.username)) return;
 
 			let out = eval(args.join(' '));
 			if(out == null) out = 'No output...';
 			if(typeof out == 'object') out = JSON.stringify(out);
-			return send(out);
+			return send(out);}
 		}
 	}
 };
