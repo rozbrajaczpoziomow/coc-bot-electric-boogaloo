@@ -156,11 +156,7 @@ Twitch.EventListeners = {
 			let adminCommands = ['new', 'start', 'eval'].map(i => Twitch.Config.prefix+i);
 
 			if(Twitch.isAdmin(tags.username))
-				return send(
-					`list of commands: ${[...viewerCommands, ...adminCommands].join(
-						', '
-					)}`
-				);
+				return send(`list of commands: ${[...viewerCommands, ...adminCommands].join(', ')}`);
 
 			return send(`sup bru, looking for list of commands?
 		today is your lucky day: ${viewerCommands.join(', ')}`);
