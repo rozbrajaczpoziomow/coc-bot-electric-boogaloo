@@ -2,14 +2,10 @@
 // This line is a tribute to me leaking my CG token on the second commit on the repo on GH
 const AllConfig = require('./config.json');
 const tmi = require('tmi.js');
+const { writeFile, readdirSync } = require('fs');
 require('child_process').spawn('git', ['pull', '-f'], { shell: true, windowsHide: true, detached: true }).unref();
 
-if(AllConfig.Twitch.evalGlobal)
-	for(var i = 0; i < 5; i++)
-		console.log('[!!!] Having evalGlobal enabled is a terrible idea... For token safety reasons or something idk...');
-
 async function SaveConfig() {
-	const { writeFile } = require('fs');
 	writeFile('./config.json', JSON.stringify(AllConfig, null, 4), () => {});
 }
 
@@ -122,6 +118,9 @@ Twitch.Client = new tmi.Client({
 
 Twitch.Client.connect();
 Twitch.CurrentClash = {};
+Twitch.Commands = readdirSync('./commands').map(fn => require(`./commands/${fn}`));
+console.log('[TWITCH] Loaded commands:');
+console.log(Twitch.Commands);
 Twitch.isAdmin = username => Twitch.Config.admins.includes(username.toLowerCase());
 Twitch.EventListeners = {
 	// eslint-disable-next-line no-unused-vars
@@ -141,43 +140,22 @@ Twitch.EventListeners = {
 
 		if(!message.startsWith(Twitch.Config.prefix)) return;
 		const _cmd = message.slice(Twitch.Config.prefix.length).split(' ');
-		const cmd = _cmd[0].toLowerCase();
+		const name = _cmd[0].toLowerCase();
 		const args = _cmd.slice(1);
 
-		if(cmd == 'link')
-			return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
+		const matchingCommands = Twitch.Commands.filter(cmd => cmd.command == name);
 
-		if(cmd == 'new') {
-			if(!Twitch.isAdmin(tags.username))
-				return send(Twitch.CurrentClash.url ?? 'No clash created yet...');
-			Twitch.CurrentClash = new CG.Clash(args, args);
-			if(!await Twitch.CurrentClash.create())
-				return send('Creating clash failed (see console)...');
-			return send(Twitch.CurrentClash.url);
-		}
+		if(matchingCommands.length == 0)
+			return console.log('[TWITCH] No matching commands found.');
+		else if(matchingCommands.length > 1)
+			return console.log(`[TWITCH] ${matchingCommands.length} commands matches for message '${message}' - ${matchingCommands.map(x => x.command).join(', ')}`)
+		
+		const command = matchingCommands[0];
+		
+		if(command.requiresAdmin && !Twitch.isAdmin(tags.username.toLowerCase()))
+			return console.log(`[TWITCH] Insufficient permissions to run command.`);
 
-		if(cmd == 'start') {
-			if(!Twitch.isAdmin(tags.username))
-				return send(Twitch.CurrentClash.url);
-
-			if(!Twitch.CurrentClash.start)
-				return send(`There hasn't been a clash created.`);
-
-			await Twitch.CurrentClash.start();
-			if(CG.Config.autoSubmit)
-				setTimeout(() => Twitch.CurrentClash.submit(), 30000);
-		}
-
-		if(cmd == 'eval') {
-			if(!Twitch.Config.evalEnabled)
-				return send('Eval is disabled');
-			if(!Twitch.Config.evalGlobal && !Twitch.Config.admins.includes(tags.username.toLowerCase()))
-				return send('I do not give you consent to use that command...mate...that\'d too dangerous...');
-			let out = eval(args.join(' '));
-			if(out == null) out = 'No output...';
-			if(typeof out == 'object') out = JSON.stringify(out);
-			return send(out);
-		}
+		command.run(Twitch, args, this);
 	}
 };
 
