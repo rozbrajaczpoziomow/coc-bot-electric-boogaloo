@@ -4,13 +4,11 @@ const AllConfig = require('./config.json');
 const tmi = require('tmi.js');
 const { writeFile, readdirSync } = require('fs');
 const { spawnSync } = require('child_process');
-// spawn('git', ['pull', '-f'], { shell: true, windowsHide: true, detached: true }).unref();
-const commit = spawnSync('git', ['rev-parse', 'HEAD'], { shell: true, windowsHide: true, detached: true }).stdout.toString();
+const commit = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { shell: true, windowsHide: true, detached: true }).stdout.toString();
 
 async function SaveConfig() {
 	writeFile('./config.json', JSON.stringify(AllConfig, null, 4), () => {});
 }
-
 Array.prototype.last = function last() { return this[this.length - 1]; };
 
 const CG = {
@@ -157,7 +155,7 @@ Twitch.EventListeners = {
 		if(command.requiresAdmin && !Twitch.isAdmin(tags.username.toLowerCase()))
 			return console.log(`[TWITCH] Insufficient permissions to run command.`);
 
-		command.run(Twitch, args, { CG, Twitch });
+		command.run(Twitch, args, { CG, Twitch, commit });
 	}
 };
 
