@@ -148,14 +148,14 @@ Twitch.EventListeners = {
 		if(matchingCommands.length == 0)
 			return console.log('[TWITCH] No matching commands found.');
 		else if(matchingCommands.length > 1)
-			return console.log(`[TWITCH] ${matchingCommands.length} commands matches for message '${message}' - ${matchingCommands.map(x => x.command).join(', ')}`)
+			return console.log(`[TWITCH] ${matchingCommands.length} commands matches for message '${message}' - ${matchingCommands.map(x => x.command).join(', ')}`);
 		
 		const command = matchingCommands[0];
-		
+
 		if(command.requiresAdmin && !Twitch.isAdmin(tags.username.toLowerCase()))
 			return console.log(`[TWITCH] Insufficient permissions to run command.`);
 
-		command.run(Twitch, args, this);
+		command.run(Twitch, args, { CG, Twitch });
 	}
 };
 
