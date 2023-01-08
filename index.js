@@ -3,7 +3,9 @@
 const AllConfig = require('./config.json');
 const tmi = require('tmi.js');
 const { writeFile, readdirSync } = require('fs');
-require('child_process').spawn('git', ['pull', '-f'], { shell: true, windowsHide: true, detached: true }).unref();
+const { spawnSync } = require('child_process');
+// spawn('git', ['pull', '-f'], { shell: true, windowsHide: true, detached: true }).unref();
+const commit = spawnSync('git', ['rev-parse', 'HEAD'], { shell: true, windowsHide: true, detached: true }).stdout.toString();
 
 async function SaveConfig() {
 	writeFile('./config.json', JSON.stringify(AllConfig, null, 4), () => {});
@@ -84,7 +86,7 @@ const CG = {
 		async submit() {
 			console.log(`[CG] Submitting for clash ${this.publicHandle}`);
 			this.ideHandle = (await (await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/startClashTestSession', [CG.Config.userId, this.publicHandle])).json()).handle;
-			await CG.Request.POST('https://www.codingame.com/services/TestSession/submit', [this.ideHandle, { code: `Stream: https://twitch.tv/${Twitch.Config.channel}\nBot: https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo`, programmingLanguageId: CG.Clash.languages[Math.floor(Math.random() * CG.Clash.languages.length)] }, null]);
+			await CG.Request.POST('https://www.codingame.com/services/TestSession/submit', [this.ideHandle, { code: `Stream: https://twitch.tv/${Twitch.Config.channel}\nBot: https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo @ ${commit}`, programmingLanguageId: CG.Clash.languages[Math.floor(Math.random() * CG.Clash.languages.length)] }, null]);
 			await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/shareCodinGamerSolutionByHandle', [CG.Config.userId, this.publicHandle]);
 		}
 
