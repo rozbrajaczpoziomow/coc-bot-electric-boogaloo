@@ -6,7 +6,8 @@
 	},
 	"Twitch": {
 		"username": "The twitch username of your bot",
-		"token": "Can be gotten thru https://twitchapps.com/tmi/",
+		"token": "Can be gotten thru https://twitchtokengenerator.com",
+		"clientID": "Same website as above",
 		"channel": "Your twitch username",
 		"admins": [
 			"< Bot admins, treated above mods",
@@ -15,6 +16,9 @@
 			"tyrolkagd"
 		],
 		"prefix": "The prefix for commands, can also be set by sending `@<username> prefix <something>` as the owner",
-		"evalEnabled": "Whether the eval command is enabled (type: boolean)"
+		"evalEnabled": "Whether the eval command is enabled (type: boolean)",
+        "disabledCommands": "Array of commands which will silently fail when trying to run them.",
+        "announceBan": "When someone gets banned, do we announce it in chat (type: boolean)",
+        "announceBanMessage": "The message that gets sent when someone gets banned, if announceBan is enabled. Replaces $user with the username."
 	}
 }

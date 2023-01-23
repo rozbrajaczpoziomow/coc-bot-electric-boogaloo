@@ -9,9 +9,17 @@ module.exports = {
 		if(!Twitch.Config.evalEnabled)
 			return send('Eval is disabled');
 
-		let out = eval(args.join(' '));
-		if(out == null) out = 'No output...';
-		if(typeof out != 'string') out = JSON.stringify(out);
-		return send(out);
+		const code = args.join(' ');
+
+		let out = '<nothing>';
+		try {
+			out = eval(code);
+			if(out == null) out = 'No output...';
+			if(typeof out != 'string') out = JSON.stringify(out);
+			return send(out);
+		} catch(e) {
+			console.error(e);
+			return send(e.toString());
+		}
 	}
 };

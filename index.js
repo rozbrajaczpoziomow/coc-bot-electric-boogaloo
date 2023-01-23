@@ -118,6 +118,10 @@ Twitch.Client = new tmi.Client({
 
 Twitch.Client.connect();
 Twitch.CurrentClash = {};
+Twitch.HelixAuth = {
+	Authorization: `Bearer ${Twitch.Config.token.slice(6)}`,
+	'Client-Id': Twitch.Config.clientID
+};
 Twitch.Commands = readdirSync('./commands').map(fn => require(`./commands/${fn}`));
 console.log('[TWITCH] Loaded commands:');
 console.log(Twitch.Commands);
@@ -129,7 +133,7 @@ Twitch.EventListeners = {
 		// if(self) return;
 		// console.log(`Message: ${message}`);
 		// console.log(`Tags: `, tags);
-		if(message.startsWith(`@${Twitch.Config.username} prefix`)) {
+		if(message.toLowerCase().startsWith(`@${Twitch.Config.username.toLowerCase()} prefix`)) {
 			if(!Twitch.isAdmin(tags.username))
 				return send(`Current prefix: ${Twitch.Config.prefix}`);
 			Twitch.Config.prefix = message.split(' ').last();
@@ -152,11 +156,22 @@ Twitch.EventListeners = {
 		
 		const command = matchingCommands[0];
 
-		if(command.requiresAdmin && !Twitch.isAdmin(tags.username.toLowerCase()))
-			return console.log(`[TWITCH] Insufficient permissions to run command.`);
+		if(Twitch.Config.disabledCommands.includes(command.command.toLowerCase()))
+			return console.log(`[TWITCH] @${tags.username} tried to run a disabled command ${name}`);
 
-		command.run(Twitch, args, { CG, Twitch, commit });
+		if(command.requiresAdmin && !Twitch.isAdmin(tags.username.toLowerCase()))
+			return console.log(`[TWITCH] @${tags.username} has insufficient permissions to run ${name}.`);
+
+		command.run(Twitch, args, { CG, commit, tags, SaveConfig });
+	},
+	// eslint-disable-next-line no-unused-vars
+	ban: async function onBan(channel, message, _, tags) {
+		const send = msg => Twitch.Client.say(channel, msg);
+		send(Twitch.Config.announceBanMessage.replaceAll('$user', message));
 	}
 };
 
 Twitch.Client.on('message', Twitch.EventListeners.message);
+
+if(Twitch.Config.announceBan)
+	Twitch.Client.on('ban', Twitch.EventListeners.ban);

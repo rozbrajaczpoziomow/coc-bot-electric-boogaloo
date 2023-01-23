@@ -7,11 +7,17 @@
 	"Twitch": {
 		"username": "tyrolkagd",
 		"token": "oauth:_______________________________",
+		"clientID": "______________________________",
 		"channel": "tyrolkagd",
 		"admins": [
 			"tyrolkagd"
 		],
 		"prefix": ",",
-		"evalEnabled": true
+		"evalEnabled": true,
+        "disabledCommands": [
+        	"followage"
+        ],
+        "announceBan": false,
+        "announceBanMessage": "Disabled, :)"
 	}
 }
