@@ -4,7 +4,8 @@ const AllConfig = require('./config.json');
 const tmi = require('tmi.js');
 const { writeFile, readdirSync } = require('fs');
 const { spawnSync } = require('child_process');
-const commit = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { shell: true, windowsHide: true, detached: true }).stdout.toString();
+const commitShort = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { shell: true, windowsHide: true, detached: true }).stdout.toString();
+const commitLong = spawnSync('git', ['rev-parse', 'HEAD'], { shell: true, windowsHide: true, detached: true }).stdout.toString();
 
 async function SaveConfig() {
 	writeFile('./config.json', JSON.stringify(AllConfig, null, 4), () => {});
@@ -84,7 +85,7 @@ const CG = {
 		async submit() {
 			console.log(`[CG] Submitting for clash ${this.publicHandle}`);
 			this.ideHandle = (await (await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/startClashTestSession', [CG.Config.userId, this.publicHandle])).json()).handle;
-			await CG.Request.POST('https://www.codingame.com/services/TestSession/submit', [this.ideHandle, { code: `Stream: https://twitch.tv/${Twitch.Config.channel}\nBot: https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo @ ${commit}`, programmingLanguageId: CG.Clash.languages[Math.floor(Math.random() * CG.Clash.languages.length)] }, null]);
+			await CG.Request.POST('https://www.codingame.com/services/TestSession/submit', [this.ideHandle, { code: `Stream: https://twitch.tv/${Twitch.Config.channel}\nBot: https://github.com/rozbrajaczpoziomow/coc-bot-electric-boogaloo/commit/${commitLong}`, programmingLanguageId: CG.Clash.languages[Math.floor(Math.random() * CG.Clash.languages.length)] }, null]);
 			await CG.Request.POST('https://www.codingame.com/services/ClashOfCode/shareCodinGamerSolutionByHandle', [CG.Config.userId, this.publicHandle]);
 		}
 
@@ -130,9 +131,6 @@ Twitch.EventListeners = {
 	// eslint-disable-next-line no-unused-vars
 	message: async function onMessage(channel, tags, message, self) {
 		const send = msg => Twitch.Client.say(channel, msg);
-		// if(self) return;
-		// console.log(`Message: ${message}`);
-		// console.log(`Tags: `, tags);
 		if(message.toLowerCase().startsWith(`@${Twitch.Config.username.toLowerCase()} prefix`)) {
 			if(!Twitch.isAdmin(tags.username))
 				return send(`Current prefix: ${Twitch.Config.prefix}`);
@@ -162,7 +160,7 @@ Twitch.EventListeners = {
 		if(command.requiresAdmin && !Twitch.isAdmin(tags.username.toLowerCase()))
 			return console.log(`[TWITCH] @${tags.username} has insufficient permissions to run ${name}.`);
 
-		command.run(Twitch, args, { CG, commit, tags, SaveConfig });
+		command.run(Twitch, args, { CG, commitShort, tags, SaveConfig });
 	},
 	// eslint-disable-next-line no-unused-vars
 	ban: async function onBan(channel, message, _, tags) {

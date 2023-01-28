@@ -5,6 +5,6 @@ module.exports = {
 	// eslint-disable-next-line no-unused-vars
 	run: async function info(Twitch, args, __main) {
 		const send = msg => Twitch.Client.say(Twitch.Config.channel, msg);
-		return send(`/me rozbrajaczpoziomow/coc-bot-electric-boogaloo running ${__main.commit}`);
+		return send(`/me rozbrajaczpoziomow/coc-bot-electric-boogaloo running ${__main.commitShort}`);
 	}
 };
