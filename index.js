@@ -185,12 +185,3 @@ Twitch.Client.on('message', Twitch.EventListeners.message);
 
 if(Twitch.Config.announceBan)
 	Twitch.Client.on('ban', Twitch.EventListeners.ban);
-
-Twitch.Client.on('follow', (a, b, c, d, e, f) => {
-	console.log(a);
-	console.log(b);
-	console.log(c);
-	console.log(d);
-	console.log(e);
-	console.trace(f);
-});
