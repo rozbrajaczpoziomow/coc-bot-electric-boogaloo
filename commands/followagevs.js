@@ -2,7 +2,7 @@ const humanize = require('humanize-duration');
 
 module.exports = {
 	command: 'followagevs', // Should match the filename, and the function name in run
-	description: 'Checks which user has followed the streamer for longer',
+	description: 'Checks which user has followed the streamer for longer (Note: I have no idea why, sometimes this command is just...wrong?)',
 	requiresAdmin: false,
 	run: async function followagevs(Twitch, args, __main) {
 		const send = msg => Twitch.Client.say(Twitch.Config.channel, msg);
@@ -30,26 +30,12 @@ module.exports = {
 			return send(`Are you sure that ${blame} is a real twitch user? LUL`);
 		}
 
-		console.log(data);
-
 		const user1ID = data[0].id;
 		const user2ID = data[1].id;
 		const streamerID = data[2].id;
 
-		console.log(user1ID, user2ID, streamerID);
-
-		let user1followage = ((await (await Twitch.HelixRequest(`users/follows?from_id=${user1ID}&to_id=${streamerID}&first=1`, {})).json()));
-			// .data)[0]?.followed_at ?? 0;
-		let user2followage = ((await (await Twitch.HelixRequest(`users/follows?from_id=${user2ID}&to_id=${streamerID}&first=1`, {})).json()));
-			// .data)[0]?.followed_at ?? 0;
-
-		// console.log(`U1 = ${user1followage}\nU2 = ${user2followage}`);
-		console.log('U1');
-		console.log(user1followage);
-		console.log('U2');
-		console.log(user2followage);
-
-		return;
+		let user1followage = ((await (await Twitch.HelixRequest(`users/follows?from_id=${user1ID}&to_id=${streamerID}&first=1`, {})).json()).data)[0]?.followed_at ?? 0;
+		let user2followage = ((await (await Twitch.HelixRequest(`users/follows?from_id=${user2ID}&to_id=${streamerID}&first=1`, {})).json()).data)[0]?.followed_at ?? 0;
 
 		if(user1followage == 0)
 			return send(`${user1} is not following ${Twitch.Config.channel} :(`);
