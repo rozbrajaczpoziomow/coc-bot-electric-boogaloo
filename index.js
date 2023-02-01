@@ -119,9 +119,21 @@ Twitch.Client = new tmi.Client({
 
 Twitch.Client.connect();
 Twitch.CurrentClash = {};
-Twitch.HelixAuth = {
-	Authorization: `Bearer ${Twitch.Config.token.slice(6)}`,
-	'Client-Id': Twitch.Config.clientID
+Twitch.HelixData = {
+	method: 'GET',
+	headers: {
+		Authorization: `Bearer ${Twitch.Config.token.slice(6)}`,
+		'Client-Id': Twitch.Config.clientID
+	}
+};
+Twitch.HelixRequest = function getHelix(endpoint, extraData) {
+	const url = `https://api.twitch.tv/helix/${endpoint}`;
+	const data = {};
+	[Twitch.HelixData, extraData].map(val => Object.entries(val).map(pair => data[pair[0]] = pair[1]));
+
+	console.log(`[TWITCH] Helix API Request to ${url}`);
+
+	return fetch(url, data);
 };
 Twitch.Commands = readdirSync('./commands').map(fn => require(`./commands/${fn}`));
 console.log('[TWITCH] Loaded commands:');
@@ -173,3 +185,12 @@ Twitch.Client.on('message', Twitch.EventListeners.message);
 
 if(Twitch.Config.announceBan)
 	Twitch.Client.on('ban', Twitch.EventListeners.ban);
+
+Twitch.Client.on('follow', (a, b, c, d, e, f) => {
+	console.log(a);
+	console.log(b);
+	console.log(c);
+	console.log(d);
+	console.log(e);
+	console.trace(f);
+});

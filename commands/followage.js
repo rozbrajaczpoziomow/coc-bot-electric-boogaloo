@@ -11,31 +11,25 @@ module.exports = {
 		if(args.length > 0)
 			username = args[0];
 
-		username = username.toLowerCase();
+		username = username.toLowerCase().replace('@', '');
 
 		if(username == Twitch.Config.channel.toLowerCase())
 			return send(`${username} can't follow themselves, that's illegal!`);
 
-		let json = await (await fetch(`https://api.twitch.tv/helix/users?login=${username}`, {
-			method: 'GET',
-			headers: Twitch.HelixAuth
-		})).json();
+		// Fetch the users and ours id at the same time
+		let json = await (await Twitch.HelixRequest(`users?login=${username}&login=${Twitch.Config.channel}`, {})).json();
 
-		let data = json.data[0];
-		if(data == undefined)
+		if(json.error)
+			return send(`Are you sure that ${username} is a real Twitch user? LUL`);
+
+		let data = json.data;
+		if(data.length < 2)
 			return send(`Are you sure that ${username} is alive or even exists?`);
-		const fromID = data.id;
 
-		json = await (await fetch(`https://api.twitch.tv/helix/users?login=${Twitch.Config.channel}`, {
-			method: 'GET',
-			headers: Twitch.HelixAuth
-		})).json();
-		const toID = json.data[0].id; // asserting here that we exist
+		const fromID = data[0].id;
+		const toID = data[1].id;
 
-		json = await (await fetch(`https://api.twitch.tv/helix/users/follows?from_id=${fromID}&to_id=${toID}&first=1`, {
-			method: 'GET',
-			headers: Twitch.HelixAuth
-		})).json();
+		json = await (await Twitch.HelixRequest(`users/follows?from_id=${fromID}&to_id=${toID}&first=1`, {})).json();
 
 		data = json.data[0];
 
