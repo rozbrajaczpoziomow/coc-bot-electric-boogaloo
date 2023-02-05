@@ -1,6 +1,6 @@
 {
 	"CodinGame": {
-		"token": "00000000-0000-0000-0000-000000000000",
+		"token": "_______________________________________",
 		"userId": 4175165,
 		"autoSubmit": false
 	},
@@ -14,10 +14,10 @@
 		],
 		"prefix": ",",
 		"evalEnabled": true,
-        "disabledCommands": [
-        	"followage"
-        ],
-        "announceBan": false,
-        "announceBanMessage": "Disabled, :)"
+		"disabledCommands": [
+
+		],
+		"announceBan": false,
+		"announceBanMessage": "Disabled, :)"
 	}
 }

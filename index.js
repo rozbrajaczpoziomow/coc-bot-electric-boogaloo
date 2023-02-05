@@ -20,7 +20,7 @@ const CG = {
 			return fetch(url, {
 				method: 'GET',
 				headers: {
-					Cookie: `cgSession=${CG.Config.token}`
+					Cookie: `rememberMe=${CG.Config.token}`
 				}
 			});
 		},
@@ -30,7 +30,7 @@ const CG = {
 				method: 'POST',
 				headers: {
 					'Content-Type': typeof data == 'object'? 'application/json' : 'application/x-www-url-encoded',
-					Cookie: `cgSession=${CG.Config.token}`
+					Cookie: `rememberMe=${CG.Config.token}`
 				},
 				body: typeof data == 'object'? JSON.stringify(data) : data
 			});

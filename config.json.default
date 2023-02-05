@@ -1,6 +1,6 @@
 {
 	"CodinGame": {
-		"token": "cgSession cookie value",
+		"token": "rememberMe cookie value @ CG",
 		"userId": "can be gotten by looking at requests",
 		"autoSubmit": "Whether to automatically submit as the bot, set to false if the bot account is your main account (type: boolean)"
 	},
@@ -17,8 +17,8 @@
 		],
 		"prefix": "The prefix for commands, can also be set by sending `@<username> prefix <something>` as the owner",
 		"evalEnabled": "Whether the eval command is enabled (type: boolean)",
-        "disabledCommands": "Array of commands which will silently fail when trying to run them.",
-        "announceBan": "When someone gets banned, do we announce it in chat (type: boolean)",
-        "announceBanMessage": "The message that gets sent when someone gets banned, if announceBan is enabled. Replaces $user with the username."
+		"disabledCommands": "Array of commands which will silently fail when trying to run them.",
+		"announceBan": "When someone gets banned, do we announce it in chat (type: boolean)",
+		"announceBanMessage": "The message that gets sent when someone gets banned, if announceBan is enabled. Replaces $user with the username."
 	}
 }
