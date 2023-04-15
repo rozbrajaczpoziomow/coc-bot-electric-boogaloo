@@ -169,8 +169,12 @@ Twitch.EventListeners = {
 		if(Twitch.Config.disabledCommands.includes(command.command.toLowerCase()))
 			return console.log(`[TWITCH] @${tags.username} tried to run a disabled command ${name}`);
 
-		if(command.requiresAdmin && !Twitch.isAdmin(tags.username.toLowerCase()))
+		if(command.requiresAdmin && !Twitch.isAdmin(tags.username.toLowerCase())) {
+			if(Twitch.Config.permissionDeniedMessage)
+				send(Twitch.Config.permissionDeniedMessage);
+
 			return console.log(`[TWITCH] @${tags.username} has insufficient permissions to run ${name}.`);
+		}
 
 		command.run(Twitch, args, { CG, commitShort, tags, SaveConfig });
 	},

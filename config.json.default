@@ -19,6 +19,7 @@
 		"evalEnabled": "Whether the eval command is enabled (type: boolean)",
 		"disabledCommands": "Array of commands which will silently fail when trying to run them.",
 		"announceBan": "When someone gets banned, do we announce it in chat (type: boolean)",
-		"announceBanMessage": "The message that gets sent when someone gets banned, if announceBan is enabled. Replaces $user with the username."
+		"announceBanMessage": "The message that gets sent when someone gets banned, if announceBan is enabled. Replaces $user with the username.",
+		"permissionDeniedMessage": "The message that gets sent when a non-admin tries to send an admin command (leave blank to disable)"
 	}
 }

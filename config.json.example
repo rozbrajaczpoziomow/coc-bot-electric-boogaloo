@@ -18,6 +18,7 @@
 
 		],
 		"announceBan": false,
-		"announceBanMessage": "Disabled, :)"
+		"announceBanMessage": "Disabled, :)",
+		"permissionDeniedMessage": "It looks like you're not responsible enough to use this command...how sad."
 	}
 }
